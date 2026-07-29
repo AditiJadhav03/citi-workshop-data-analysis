@@ -1,113 +1,162 @@
-# Coding Workshop
+# ACME Workforce Analytics — Backend Data Pipeline
 
-The goal of this coding workshop is to enable and assess the hands-on skills
-of participants through development of a practical technical solution that
-solves a theoretical business problem.
+A medallion-architecture ETL pipeline built during a Citi coding workshop (July 2026).
 
-## Getting Started
+I worked on this project as a **backend / data engineering** participant. The pipeline
+ingests seven operational exports from six source systems into a layered data lake and
+produces nine gold tables answering organisational-structure and staffing questions.
 
-Navigate to [Coding Workshop - Main Guide](./docs/README.md) to get started.
+> **Scope of my work:** backend and data engineering only. See
+> [Attribution](#attribution) below for exactly which files are mine and which came
+> from the workshop's starter scaffold. The `frontend/` directory is unmodified
+> starter code and was not part of my task.
 
-## Coding Workshop Example
+---
 
-Coding workshop organizer(s) will provide instructions to follow by email. Here
-below is a real example of requirements and expectations for participant(s):
+## Status
 
-### Requirements: Business Problem
+**Workshop complete — infrastructure decommissioned.**
 
-Our company ACME Inc. is going through a massive organizational transformation
-to become a more data-driven organization. Information about teams structure
-and performance is currently scattered across multiple systems, making it
-difficult to get a comprehensive view of team dynamics and achievements.
+This repository is the preserved source code. The AWS infrastructure it deployed to
+was torn down at the end of the workshop, and the workshop environment no longer
+exists. Nothing is currently running.
 
-We are struggling to answer simple questions like:
+The pipeline still runs locally against Docker Compose (see
+[Running locally](#running-locally)) provided source data is supplied.
 
-* Who are the members of each team?
-* Where are the teams located?
-* What are the key achievements of each team on a monthly basis?
-* How many teams have team leader not co-located with team members?
-* How many teams have team leader as a non-direct staff?
-* How many teams have non-direct staff to employees ratio above 20%?
-* How many teams are reporting to an organization leader?
+---
 
-### Requirements: Technical Solution
+## Architecture
 
-As part of this transformation, we are looking to build a centralized team
-management tool that will allow us to track team members, team locations,
-monthly team achievements, as well as individual-level and team-level metadata.
-Initial focus is to provide a self-service capability without any integrations
-with other tools such as Employee Directory, Project Tracking, or Performance
-Management.
+```
+raw ──► bronze ──► silver ──► gold
+                └──► quarantine   (rejected records, retained per batch)
+```
 
-The technical solution involves developing a stand-alone web application using
-modern technologies. The application will have the following features:
+Every run emits a lineage manifest recording source path, target path and row counts
+for each hop, written to `data/lineage/batch_id=<timestamp>-<hash>/`. Sample manifests
+are committed under `docs/test-evidence/lineage-manifests/`.
 
-* User authentication and authorization
-* Role-based access control
-* CRUD operations for individuals, teams, achievements and metadata
-* Search and filter functionality
-* Responsive design for mobile and desktop usage
+### Sources → bronze
 
-### Requirements: Technology Stack
+Ingested to date-partitioned Parquet (`ingest_date=YYYY-MM-DD`):
 
-The following technologies are required to build the application:
+| Source system | Files |
+| --- | --- |
+| Employee directory | `employees.csv` |
+| Vendor management | `contractor_roster.csv` |
+| Facilities | `locations.csv` |
+| Org structure | `organizations.json` |
+| Project tracking | `teams.json`, `team_membership.csv` |
+| Performance management | `monthly_achievements.json` |
 
-* Frontend: HTML, CSS, React.js with React Responsive and Material UI Components
-* Backend: Python
-* Database: PostgreSQL
+### Bronze → silver
 
-The following technologies are good to know, as they are used to manage and
-deploy code:
+Schema validation, type coercion and deduplication produce eight conformed tables:
 
-* Version Control: Git, GitHub
-* Infrastructure: Terraform
-* Deployment Mode: Shell Scripts
-* Deployment Target: AWS Serverless (e.g., S3, CloudFront, Lambda, RDS)
+`employees` · `contractors` · `locations` · `organizations` · `teams` ·
+`team_membership` · `achievements` · `dim_person`
 
-### Expectations: Value-Based Outcomes
+`dim_person` is a unified person dimension merging employees and contractors into a
+single identity, so downstream analytics can treat the whole workforce consistently.
 
-By the end of the workshop, participants will have developed a functional
-web application that meets the requirements outlined above. The application
-will be deployed to a cloud environment and accessible via a web browser.
-Participants will also gain hands-on experience with modern web development
-technologies and best practices.
+Records failing validation are written to `quarantine/silver/<table>/batch_id=<id>/`
+rather than dropped, keeping every rejection auditable per run.
 
-## Contributing
+### Silver → gold
 
-See the [CONTRIBUTING](./CONTRIBUTING.md) resource for more details.
+| Table | Answers |
+| --- | --- |
+| `team_members` | Who the members of each team are |
+| `team_locations` | Where each team is located |
+| `monthly_team_achievements` | Key achievements per team, per month |
+| `leader_not_colocated` | Teams whose leader is not co-located with their members |
+| `leader_non_direct_staff` | Teams whose leader is non-direct staff |
+| `staff_ratio_analysis` | Teams exceeding a 20% non-direct-staff to employee ratio |
+| `organization_reporting_summary` | Teams reporting to an organization leader |
+| `employee_summary` | Headcount and attribute rollup across the workforce |
+| `business_answers` | Consolidated answers to the business questions |
 
-## License
+Sample output charts are in [`docs/results/`](docs/results/).
 
-This library is licensed under the MIT-0 License.
-See the [LICENSE](./LICENSE) resource for more details.
+---
 
-## Roadmap
+## Stack
 
-See the
-[open issues](https://github.com/citi/coding-workshop-participant/issues)
-for a list of proposed roadmap features (and known issues).
+PySpark · Parquet · PostgreSQL · Terraform (S3, RDS, EKS, Lambda, CloudFront) ·
+Helm · Docker Compose · pytest
 
-## Security
+The same `data_pipeline.main` entry point runs locally and on EKS. The cloud launcher
+(`data/team-etl/job.py`) pulls the packaged pipeline from S3 and places the zip on
+`sys.path`, so cloud execution changes configuration only — never code.
 
-See the
-[Security Issue Notifications](./CONTRIBUTING.md#security-issue-notifications)
-resource for more details.
+---
 
-## Authors
+## Repository layout
 
-The following people have contributed to this workshop:
+```
+backend/data_pipeline/
+├── ingestion/          # Source readers → bronze
+├── silver/             # bronze_to_silver: validate, conform, deduplicate
+├── gold/               # silver_to_gold: joins and aggregations
+├── validation/         # Schema definitions and the validator
+├── database/           # PostgreSQL loader
+├── utils/              # Spark session, transforms, IO, logging
+├── notebooks/          # business_questions.ipynb
+└── main.py             # Entry point
+backend/tests/          # pytest suite for transforms and validation
+data/team-etl/          # EKS entry point
+infra/                  # Terraform + Helm chart
+```
 
-* Colin Heilman - [@heilmancs](https://github.com/heilmancs)
-* Eugene Istrati - [@eistrati](https://github.com/eistrati)
-* Isaiah Cornelius Smith - [@corneliusmith](https://github.com/corneliusmith)
-* Juan Arevalo - [@jparevalo27](https://github.com/jparevalo27)
-* Michael Annucci - [@michael-annucci](https://github.com/michael-annucci)
+---
 
-## Feedback
+## Running locally
 
-We'd love to hear your feedback! Please:
+```bash
+cp .env.local.sample .env.local
+docker compose up -d
 
-* ⭐ Star the repository if you find it helpful
-* 🐛 Report issues on GitHub
-* 💡 Suggest improvements
-* 📝 Share your experience
+pip install -r backend/requirements.txt
+python -m data_pipeline.main
+
+pytest backend/tests
+```
+
+---
+
+## Data
+
+**The workshop dataset is not included in this repository.**
+
+The pipeline reads source files from `RAW_DIR` (defaults to `data/raw/`). Expected
+directory structure is documented in [`data/README.md`](data/README.md), and
+column-level schemas and validation rules are defined in
+`backend/data_pipeline/validation/schemas.py`.
+
+---
+
+## Attribution
+
+The project scaffold comes from Citi's Apache-2.0 licensed coding-workshop starter
+repository. To be explicit about what is and isn't my work:
+
+**Written by me (backend / data engineering task):**
+
+- `backend/data_pipeline/` — the full pipeline: ingestion, bronze→silver,
+  silver→gold, validation, quarantine handling, lineage manifests, Postgres loader
+- `backend/tests/` — pytest coverage for transforms and validation
+- `data/team-etl/job.py` — EKS launcher
+- `infra/eks.tf` and `infra/helm/` — cluster and job deployment
+
+**From the starter scaffold (not my work):**
+
+- `bin/` — setup, deployment and teardown scripts
+- `infra/*.tf` other than `eks.tf` — S3, RDS, Lambda, CloudFront, DocumentDB
+- `frontend/` — unmodified React starter; the frontend track was a different role
+- `.github/` workflows and instruction files
+- `docs/` role guides and `validation.md`
+
+## Licence
+
+Apache-2.0, inherited from the starter repository. See [LICENSE](LICENSE).
