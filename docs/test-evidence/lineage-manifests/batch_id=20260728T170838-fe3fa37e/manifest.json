@@ -1,0 +1,200 @@
+[
+  {
+    "layer": "bronze",
+    "entity": "employees",
+    "source_path": "<project_root>/data/raw/employee_directory/employees.csv",
+    "target_path": "<project_root>/data/bronze/employee_directory/employees/ingest_date=2026-07-28",
+    "rows_read": 200004,
+    "rows_valid": 200004,
+    "rows_quarantined": 0,
+    "rows_written": 200004,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:08:46.434528+00:00",
+    "ended_at": "2026-07-28T17:08:56.710918+00:00",
+    "duration_s": 10.276,
+    "notes": {
+      "ingest_mode": "file",
+      "file_format": "csv",
+      "business_key": [
+        "emp_id"
+      ]
+    },
+    "batch_id": "20260728T170838-fe3fa37e",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.0,
+    "reconciles": true
+  },
+  {
+    "layer": "bronze",
+    "entity": "contractor_roster",
+    "source_path": "<project_root>/data/raw/vendor_management/contractor_roster.csv",
+    "target_path": "<project_root>/data/bronze/vendor_management/contractor_roster/ingest_date=2026-07-28",
+    "rows_read": 50000,
+    "rows_valid": 50000,
+    "rows_quarantined": 0,
+    "rows_written": 50000,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:08:56.710974+00:00",
+    "ended_at": "2026-07-28T17:08:58.530099+00:00",
+    "duration_s": 1.819,
+    "notes": {
+      "ingest_mode": "file",
+      "file_format": "csv",
+      "business_key": [
+        "contractor_id"
+      ]
+    },
+    "batch_id": "20260728T170838-fe3fa37e",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.0,
+    "reconciles": true
+  },
+  {
+    "layer": "bronze",
+    "entity": "locations",
+    "source_path": "<project_root>/data/raw/facilities/locations.csv",
+    "target_path": "<project_root>/data/bronze/facilities/locations/ingest_date=2026-07-28",
+    "rows_read": 10,
+    "rows_valid": 10,
+    "rows_quarantined": 0,
+    "rows_written": 10,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:08:58.530143+00:00",
+    "ended_at": "2026-07-28T17:08:59.344817+00:00",
+    "duration_s": 0.815,
+    "notes": {
+      "ingest_mode": "file",
+      "file_format": "csv",
+      "business_key": [
+        "location_code"
+      ]
+    },
+    "batch_id": "20260728T170838-fe3fa37e",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.0,
+    "reconciles": true
+  },
+  {
+    "layer": "bronze",
+    "entity": "organizations",
+    "source_path": "<project_root>/data/raw/org_structure/organizations.json",
+    "target_path": "<project_root>/data/bronze/org_structure/organizations/ingest_date=2026-07-28",
+    "rows_read": 6,
+    "rows_valid": 6,
+    "rows_quarantined": 0,
+    "rows_written": 6,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:08:59.344864+00:00",
+    "ended_at": "2026-07-28T17:09:00.203590+00:00",
+    "duration_s": 0.859,
+    "notes": {
+      "ingest_mode": "file",
+      "file_format": "json",
+      "business_key": [
+        "org_id"
+      ]
+    },
+    "batch_id": "20260728T170838-fe3fa37e",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.0,
+    "reconciles": true
+  },
+  {
+    "layer": "bronze",
+    "entity": "teams",
+    "source_path": "<project_root>/data/raw/project_tracking/teams.json",
+    "target_path": "<project_root>/data/bronze/project_tracking/teams/ingest_date=2026-07-28",
+    "rows_read": 25000,
+    "rows_valid": 25000,
+    "rows_quarantined": 0,
+    "rows_written": 25000,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:09:00.203629+00:00",
+    "ended_at": "2026-07-28T17:09:01.975517+00:00",
+    "duration_s": 1.772,
+    "notes": {
+      "ingest_mode": "file",
+      "file_format": "json",
+      "business_key": [
+        "team_id"
+      ]
+    },
+    "batch_id": "20260728T170838-fe3fa37e",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.0,
+    "reconciles": true
+  },
+  {
+    "layer": "bronze",
+    "entity": "team_membership",
+    "source_path": "<project_root>/data/raw/project_tracking/team_membership.csv",
+    "target_path": "<project_root>/data/bronze/project_tracking/team_membership/ingest_date=2026-07-28",
+    "rows_read": 244202,
+    "rows_valid": 244202,
+    "rows_quarantined": 0,
+    "rows_written": 244202,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:09:01.975560+00:00",
+    "ended_at": "2026-07-28T17:09:04.927552+00:00",
+    "duration_s": 2.952,
+    "notes": {
+      "ingest_mode": "file",
+      "file_format": "csv",
+      "business_key": [
+        "team_code",
+        "employee_email",
+        "start_date"
+      ]
+    },
+    "batch_id": "20260728T170838-fe3fa37e",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.0,
+    "reconciles": true
+  },
+  {
+    "layer": "bronze",
+    "entity": "monthly_achievements",
+    "source_path": "<project_root>/data/raw/performance_management/monthly_achievements.json",
+    "target_path": "<project_root>/data/bronze/performance_management/monthly_achievements/ingest_date=2026-07-28",
+    "rows_read": 184226,
+    "rows_valid": 184226,
+    "rows_quarantined": 0,
+    "rows_written": 184226,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:09:04.927593+00:00",
+    "ended_at": "2026-07-28T17:09:15.345821+00:00",
+    "duration_s": 10.418,
+    "notes": {
+      "ingest_mode": "file",
+      "file_format": "json",
+      "business_key": [
+        "achievement_sk"
+      ]
+    },
+    "batch_id": "20260728T170838-fe3fa37e",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.0,
+    "reconciles": true
+  }
+]

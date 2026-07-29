@@ -1,0 +1,248 @@
+[
+  {
+    "layer": "silver",
+    "entity": "locations",
+    "source_path": "<project_root>/data/bronze/facilities/locations/ingest_date=2026-07-28",
+    "target_path": "<project_root>/data/silver/locations",
+    "rows_read": 10,
+    "rows_valid": 10,
+    "rows_quarantined": 1,
+    "rows_written": 9,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:12:38.071106+00:00",
+    "ended_at": "2026-07-28T17:12:44.303523+00:00",
+    "duration_s": 6.232,
+    "notes": {
+      "rule_failures": {},
+      "warnings": {},
+      "business_key": [
+        "location_code"
+      ],
+      "known_defect": "LOC-01 maps to both Austin and Dallas; first by city wins"
+    },
+    "batch_id": "20260728T171226-345ea39a",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.1,
+    "reconciles": true
+  },
+  {
+    "layer": "silver",
+    "entity": "organizations",
+    "source_path": "<project_root>/data/bronze/org_structure/organizations/ingest_date=2026-07-28",
+    "target_path": "<project_root>/data/silver/organizations",
+    "rows_read": 6,
+    "rows_valid": 6,
+    "rows_quarantined": 0,
+    "rows_written": 6,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:12:44.678898+00:00",
+    "ended_at": "2026-07-28T17:12:47.525515+00:00",
+    "duration_s": 2.847,
+    "notes": {
+      "rule_failures": {},
+      "warnings": {},
+      "business_key": [
+        "org_id"
+      ]
+    },
+    "batch_id": "20260728T171226-345ea39a",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.0,
+    "reconciles": true
+  },
+  {
+    "layer": "silver",
+    "entity": "employees",
+    "source_path": "<project_root>/data/bronze/employee_directory/employees/ingest_date=2026-07-28",
+    "target_path": "<project_root>/data/silver/employees",
+    "rows_read": 200004,
+    "rows_valid": 200004,
+    "rows_quarantined": 4,
+    "rows_written": 200000,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:12:48.183248+00:00",
+    "ended_at": "2026-07-28T17:13:04.458989+00:00",
+    "duration_s": 16.276,
+    "notes": {
+      "rule_failures": {},
+      "warnings": {
+        "hire_date_parsed": 4017,
+        "location_present": 9954
+      },
+      "business_key": [
+        "emp_id"
+      ]
+    },
+    "batch_id": "20260728T171226-345ea39a",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 2e-05,
+    "reconciles": true
+  },
+  {
+    "layer": "silver",
+    "entity": "contractors",
+    "source_path": "<project_root>/data/bronze/vendor_management/contractor_roster/ingest_date=2026-07-28",
+    "target_path": "<project_root>/data/silver/contractors",
+    "rows_read": 50000,
+    "rows_valid": 48689,
+    "rows_quarantined": 1311,
+    "rows_written": 48689,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:13:05.106285+00:00",
+    "ended_at": "2026-07-28T17:13:10.674203+00:00",
+    "duration_s": 5.568,
+    "notes": {
+      "rule_failures": {
+        "engagement_dates_ordered": 1311
+      },
+      "warnings": {
+        "location_present": 4057
+      },
+      "business_key": [
+        "contractor_id"
+      ]
+    },
+    "batch_id": "20260728T171226-345ea39a",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.02622,
+    "reconciles": true
+  },
+  {
+    "layer": "silver",
+    "entity": "dim_person",
+    "source_path": "<project_root>/data/silver/employees + <project_root>/data/silver/contractors",
+    "target_path": "<project_root>/data/silver/dim_person",
+    "rows_read": 248689,
+    "rows_valid": 248689,
+    "rows_quarantined": 55446,
+    "rows_written": 193243,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:13:10.930935+00:00",
+    "ended_at": "2026-07-28T17:13:16.640154+00:00",
+    "duration_s": 5.709,
+    "notes": {
+      "direct_source": "employees",
+      "non_direct_source": "contractors",
+      "precedence": "DIRECT > NON_DIRECT, ACTIVE > inactive, then person_id"
+    },
+    "batch_id": "20260728T171226-345ea39a",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.222953,
+    "reconciles": true
+  },
+  {
+    "layer": "silver",
+    "entity": "teams",
+    "source_path": "<project_root>/data/bronze/project_tracking/teams/ingest_date=2026-07-28",
+    "target_path": "<project_root>/data/silver/teams",
+    "rows_read": 25000,
+    "rows_valid": 25000,
+    "rows_quarantined": 0,
+    "rows_written": 25000,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:13:17.115069+00:00",
+    "ended_at": "2026-07-28T17:13:21.169989+00:00",
+    "duration_s": 4.055,
+    "notes": {
+      "rule_failures": {},
+      "warnings": {},
+      "business_key": [
+        "team_id"
+      ]
+    },
+    "batch_id": "20260728T171226-345ea39a",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.0,
+    "reconciles": true
+  },
+  {
+    "layer": "silver",
+    "entity": "team_membership",
+    "source_path": "<project_root>/data/bronze/project_tracking/team_membership/ingest_date=2026-07-28",
+    "target_path": "<project_root>/data/silver/team_membership",
+    "rows_read": 244202,
+    "rows_valid": 196036,
+    "rows_quarantined": 48172,
+    "rows_written": 196030,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:13:21.520558+00:00",
+    "ended_at": "2026-07-28T17:13:32.667332+00:00",
+    "duration_s": 11.147,
+    "notes": {
+      "rule_failures": {
+        "team_id_format": 46937,
+        "membership_dates_ordered": 1547
+      },
+      "warnings": {
+        "allocation_in_range": 60664,
+        "start_date_parsed": 4779
+      },
+      "business_key": [
+        "team_id",
+        "employee_email",
+        "start_date"
+      ],
+      "known_defect": "allocation_pct above 100 is capped, original kept in allocation_pct_raw"
+    },
+    "batch_id": "20260728T171226-345ea39a",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.197263,
+    "reconciles": true
+  },
+  {
+    "layer": "silver",
+    "entity": "achievements",
+    "source_path": "<project_root>/data/bronze/performance_management/monthly_achievements/ingest_date=2026-07-28",
+    "target_path": "<project_root>/data/silver/achievements",
+    "rows_read": 184226,
+    "rows_valid": 123818,
+    "rows_quarantined": 60561,
+    "rows_written": 123665,
+    "status": "SUCCESS",
+    "error": null,
+    "started_at": "2026-07-28T17:13:38.259280+00:00",
+    "ended_at": "2026-07-28T17:13:48.176488+00:00",
+    "duration_s": 9.917,
+    "notes": {
+      "rule_failures": {
+        "team_id_resolved": 60408
+      },
+      "warnings": {
+        "impact_score_present": 14876
+      },
+      "business_key": [
+        "achievement_sk"
+      ],
+      "unattributed_in_source": 60693,
+      "resolved_via_reporter": 285,
+      "attribution_rule": "reporter belongs to exactly one team matching the achievement's team_name"
+    },
+    "batch_id": "20260728T171226-345ea39a",
+    "ingest_date": "2026-07-28",
+    "is_local": true,
+    "engine": "spark",
+    "quarantine_ratio": 0.328732,
+    "reconciles": true
+  }
+]
